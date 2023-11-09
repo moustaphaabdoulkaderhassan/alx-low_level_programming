@@ -1,120 +1,48 @@
+#include <stdio.h>
+#include <stdarg.h>
 #include "variadic_functions.h"
 
 /**
- * print_char - print a char
+ * print_all - function with 2 parameter
+ * @format: char type pointer to string
  *
- * @arg: a list of argument pointing
- *      to the character to be printed
- *
- * Return: nothing
-*/
-
-void print_char(va_list arg)
-{
-	char c = va_arg(arg, int);
-
-	printf("%c", c);
-}
-
-/**
- * print_int - print an integer
- *
- * @arg: a list of argument pointing
- *      to the character to be printed
- *
- * Return: nothing
-*/
-
-void print_int(va_list arg)
-{
-	int n = va_arg(arg, int);
-
-	printf("%d", n);
-}
-
-/**
- * print_float - print a float
- *
- * @arg: a list of argument pointing
- *      to the character to be printed
- *
- * Return: nothing
-*/
-
-void print_float(va_list arg)
-{
-	float n = va_arg(arg, double);
-
-	printf("%f", n);
-}
-
-/**
- * print_string - print a string
- *
- * @arg: a list of argument pointing
- *      to the character to be printed
- *
- * Return: nothing
-*/
-
-void print_string(va_list arg)
-{
-	char *str = va_arg(arg, char *);
-
-	if (str == NULL)
-	{
-		printf("(nil)");
-		return;
-	}
-	printf("%s", str);
-}
-
-/**
- * print_all - a function that prints anything
- *
- * @format: A string of character representing
- *          the argument types
- *
- * Description: If any argument not of type char,
- *              int, float or char * is ignored
- *
- * Return: nothing
-*/
-
+ * Description: prints anything followed by a new line
+ * Return: na
+ */
 void print_all(const char * const format, ...)
 {
+	int j;
+	char *str;
+	char *space;
 	va_list ap;
-	int i = 0, j = 0;
-	char *separator = "";
-	func_printer funcs[] = {
-		{"c", print_char},
-		{"i", print_int},
-		{"f", print_float},
-		{"s", print_string}
-	};
 
 	va_start(ap, format);
-
-	while (format && format[i])
+	j = 0;
+	while (format && format[j])
 	{
-		j = 0;
-		/**
-		 * 4 equals to the number of funcs present
-		 * so if j is less than four and our current
-		 * format is not equal to format in funcs
-		 * then j becomes j + 1
-		 */
-		while (j < 4 && (format[i] != *(funcs[j].symbol)))
-			j++;
-		if (j < 4)
+		space = "";
+		if (format[j + 1])
+			space = ", ";
+		switch (format[j])
 		{
-			printf("%s", separator);
-			funcs[j].print_func(ap);
-			separator = ", ";
+
+		case 'c':
+			printf("%c%s", va_arg(ap, int), space);
+			break;
+		case 'i':
+			printf("%d%s", va_arg(ap, int), space);
+			break;
+		case 'f':
+			printf("%f%s", va_arg(ap, double), space);
+			break;
+		case 's':
+			str = va_arg(ap, char *);
+			if (!str || !*str)
+				str = "(nil)";
+			printf("%s%s", str, space);
+			break;
 		}
-		i++;
+		j++;
 	}
 	printf("\n");
-
-	va_end(ap);
 }
